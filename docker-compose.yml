@@ -5,26 +5,34 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
+    container_name: jejaktani-backend
+    restart: always
+    env_file:
+      - ./backend/.env
     volumes:
-      - ./backend/data:/app/data
-    environment:
-      - PORT=3000
-    # Frontend depends on backend to be ready
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/overview"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      # Mount the data directory so SQLite database is persistent across restarts
+      - sqlite_data:/app/data
+    networks:
+      - jejaktani_net
 
   frontend:
-    image: node:22-slim
-    working_dir: /app
-    volumes:
-      - ./frontend:/app
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: jejaktani-frontend
+    restart: always
     ports:
-      - "5173:5173"
-    command: sh -c "npm install && npm run dev -- --host"
-    environment:
-      - VITE_API_URL=http://localhost:3000/api
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - jejaktani_net
+
+volumes:
+  sqlite_data:
+    name: jejaktani_sqlite_data
+
+networks:
+  jejaktani_net:
+    name: jejaktani_network
+    driver: bridge

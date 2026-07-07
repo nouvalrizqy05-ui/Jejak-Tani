@@ -68,7 +68,7 @@ export default function AccessibilityMenu() {
   }
 
   return (
-    <div className="fixed bottom-24 md:bottom-5 left-5 z-[1000] print:hidden">
+    <div className="fixed bottom-24 md:bottom-5 right-5 z-[1000] print:hidden flex flex-col items-end">
       {open && (
         <div
           ref={panelRef}

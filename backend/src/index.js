@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -22,15 +24,37 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// Security Middleware
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" } // allow images to be loaded by frontend
+}));
+
 app.use(cors());
 app.use(express.json());
+
+// Global Rate Limiter
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 500, // Limit each IP to 500 requests per windowMs
+  message: { error: 'Terlalu banyak permintaan dari IP ini, coba lagi nanti.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(globalLimiter);
+
+// Stricter Rate Limiter for Auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 50, // Limit each IP to 50 login/register requests per window
+  message: { error: 'Terlalu banyak percobaan login/daftar, coba lagi nanti.' }
+});
 
 // Serve generated QR code images
 app.use('/qrcodes', express.static(path.join(__dirname, '..', 'data', 'qrcodes')));
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', service: 'Jejak Tani API' }));
 
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/produk', produkRoutes);
 app.use('/api/trace', traceRoutes);
 app.use('/api/pesanan', pesananRoutes);
