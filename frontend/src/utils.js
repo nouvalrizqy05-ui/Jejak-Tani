@@ -29,3 +29,7 @@ export const STATUS_PESANAN_LABELS = {
   selesai: 'Selesai',
   dibatalkan: 'Dibatalkan',
 };
+
+export function cn(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
