@@ -95,6 +95,7 @@ CREATE TABLE IF NOT EXISTS gudang (
   id TEXT PRIMARY KEY,
   nama TEXT NOT NULL,
   lokasi TEXT NOT NULL,
+  lokasi_gps TEXT,
   kapasitas_ton REAL NOT NULL,
   kapasitas_terpakai_ton REAL NOT NULL DEFAULT 0
 );

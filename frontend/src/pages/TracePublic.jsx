@@ -1,11 +1,22 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import { api } from '../api.js';
 import { formatDate } from '../utils.js';
 import TrustStars from '../components/TrustStars.jsx';
 import TraceTimeline from '../components/TraceTimeline.jsx';
 import Logo from '../components/Logo.jsx';
+
+// Custom pulsating icon for the live location
+const pulseIcon = new L.divIcon({
+  className: 'custom-pulse-icon',
+  html: `<div class="relative"><div class="w-4 h-4 bg-teal-600 border-2 border-white shadow-sm rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"></div><div class="w-12 h-12 bg-teal-400 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-ping opacity-60"></div></div>`,
+  iconSize: [48, 48],
+  iconAnchor: [24, 24]
+});
 
 export default function TracePublic() {
   const { id } = useParams();
@@ -32,6 +43,18 @@ export default function TracePublic() {
     tahap: p.tahap,
     suhu: p.suhu_celcius
   })) || [];
+
+  const getCoordinates = (lokasi) => {
+    const locLower = (lokasi || '').toLowerCase();
+    if (locLower.includes('cianjur') || locLower.includes('sukamakmur')) return [-6.8167, 107.1333];
+    if (locLower.includes('tabanan') || locLower.includes('kintamani') || locLower.includes('baturiti')) return [-8.3694, 115.1628];
+    if (locLower.includes('lembang') || locLower.includes('bandung')) return [-6.8143, 107.6186];
+    if (locLower.includes('marketplace')) return [-6.2088, 106.8456];
+    return [-6.9175, 107.6191]; // Default
+  };
+
+  const currentLokasi = data?.perjalanan?.length > 0 ? data.perjalanan[data.perjalanan.length - 1].lokasi : '';
+  const currentCoords = getCoordinates(currentLokasi);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white">
@@ -85,22 +108,30 @@ export default function TracePublic() {
                     <span className="w-2 h-2 rounded-full bg-green-500"></span> LIVE
                   </span>
                 </div>
-                <div className="relative h-48 bg-stone-100 rounded-lg overflow-hidden border border-stone-200">
-                  {/* SVG map background simulation */}
-                  <svg className="absolute inset-0 w-full h-full text-stone-200" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <path fill="currentColor" d="M10,20 Q30,10 50,30 T90,20 L100,0 L0,0 Z M0,40 Q20,60 40,40 T100,50 L100,100 L0,100 Z" opacity="0.5"/>
-                    <path stroke="currentColor" strokeWidth="0.5" fill="none" d="M10,10 L90,90 M10,90 L90,10" opacity="0.3"/>
-                  </svg>
-                  {/* Radar ping animation */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <div className="relative">
-                      <div className="w-4 h-4 bg-teal-600 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"></div>
-                      <div className="w-12 h-12 bg-teal-400 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-ping opacity-75"></div>
-                    </div>
-                  </div>
+                
+                <div className="relative h-48 bg-stone-100 rounded-lg overflow-hidden border border-stone-200 z-10">
+                  <MapContainer 
+                    center={currentCoords} 
+                    zoom={12} 
+                    scrollWheelZoom={false} 
+                    style={{ height: '100%', width: '100%', zIndex: 1 }}
+                    zoomControl={false}
+                  >
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='&copy; OpenStreetMap contributors'
+                    />
+                    <Marker position={currentCoords} icon={pulseIcon}>
+                      <Popup>
+                        <div className="font-semibold text-teal-800">Posisi Saat Ini</div>
+                        <div className="text-sm">{currentLokasi}</div>
+                      </Popup>
+                    </Marker>
+                  </MapContainer>
                 </div>
+                
                 <p className="text-xs text-stone-500 mt-3 text-center">
-                  Koordinat: {data.perjalanan.length > 0 ? (data.perjalanan[data.perjalanan.length - 1].lokasi || 'Dalam perjalanan') : 'Menunggu pembaruan'}
+                  Koordinat: {currentLokasi || 'Dalam perjalanan'}
                 </p>
               </div>
 

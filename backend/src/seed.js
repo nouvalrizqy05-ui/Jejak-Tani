@@ -59,10 +59,10 @@ async function seed() {
   // --- Gudang & Armada ---
   const gudangCianjur = uid('gdg');
   const gudangTabanan = uid('gdg');
-  db.prepare(`INSERT INTO gudang (id,nama,lokasi,kapasitas_ton,kapasitas_terpakai_ton) VALUES (?,?,?,?,?)`)
-    .run(gudangCianjur, 'Gudang Agregasi Cianjur', 'Cianjur, Jawa Barat', 50, 18.5);
-  db.prepare(`INSERT INTO gudang (id,nama,lokasi,kapasitas_ton,kapasitas_terpakai_ton) VALUES (?,?,?,?,?)`)
-    .run(gudangTabanan, 'Gudang Agregasi Tabanan', 'Tabanan, Bali', 30, 9.2);
+  db.prepare(`INSERT INTO gudang (id,nama,lokasi,lokasi_gps,kapasitas_ton,kapasitas_terpakai_ton) VALUES (?,?,?,?,?,?)`)
+    .run(gudangCianjur, 'Gudang Agregasi Cianjur', 'Cianjur, Jawa Barat', '-6.8167, 107.1333', 50, 18.5);
+  db.prepare(`INSERT INTO gudang (id,nama,lokasi,lokasi_gps,kapasitas_ton,kapasitas_terpakai_ton) VALUES (?,?,?,?,?,?)`)
+    .run(gudangTabanan, 'Gudang Agregasi Tabanan', 'Tabanan, Bali', '-8.3694, 115.1628', 30, 9.2);
 
   const armadaIds = [];
   const armadaSeed = [
