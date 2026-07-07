@@ -47,6 +47,13 @@ export default function Navbar() {
             </Link>
           )}
 
+          {/* Mobile Logout Button */}
+          {user && (
+            <button onClick={() => { logout(); navigate('/'); }} className="md:hidden text-xs font-semibold text-red-600 px-3 py-1.5 bg-red-50 rounded-full hover:bg-red-100 transition-colors">
+              Keluar
+            </button>
+          )}
+
           {/* Desktop User Menu */}
           <div className="hidden md:flex items-center gap-3 border-l border-stone-200 pl-4 ml-2">
             {user ? (
