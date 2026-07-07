@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, CircleMarker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { api } from '../api.js';
@@ -10,12 +10,25 @@ import TrustStars from '../components/TrustStars.jsx';
 import TraceTimeline from '../components/TraceTimeline.jsx';
 import Logo from '../components/Logo.jsx';
 
-// Custom pulsating icon for the live location
-const pulseIcon = new L.divIcon({
-  className: 'custom-pulse-icon',
-  html: `<div class="relative"><div class="w-4 h-4 bg-teal-600 border-2 border-white shadow-sm rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"></div><div class="w-12 h-12 bg-teal-400 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-ping opacity-60"></div></div>`,
-  iconSize: [48, 48],
-  iconAnchor: [24, 24]
+// Fix default Leaflet icon path issue with bundlers
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
+
+// Custom pulsating icon — uses inline styles only (no Tailwind) to avoid
+// conflicting with Leaflet's own absolute positioning on the marker wrapper.
+const pulseIcon = new L.DivIcon({
+  className: '',              // empty — avoid leaflet-div-icon default styles
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
+  html: `
+    <div style="position:relative;width:20px;height:20px;">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;background:#0d9488;border:2px solid #fff;border-radius:50%;box-shadow:0 0 6px rgba(13,148,136,.6);z-index:2;"></div>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;background:rgba(13,148,136,.4);border-radius:50%;z-index:1;" class="leaflet-pulse-ring"></div>
+    </div>`,
 });
 
 export default function TracePublic() {
@@ -109,22 +122,24 @@ export default function TracePublic() {
                   </span>
                 </div>
                 
-                <div className="relative h-48 bg-stone-100 rounded-lg overflow-hidden border border-stone-200 z-10">
+                <div className="relative h-64 bg-stone-100 rounded-lg overflow-hidden border border-stone-200" style={{ zIndex: 0 }}>
                   <MapContainer 
                     center={currentCoords} 
-                    zoom={12} 
-                    scrollWheelZoom={false} 
-                    style={{ height: '100%', width: '100%', zIndex: 1 }}
-                    zoomControl={false}
+                    zoom={13} 
+                    scrollWheelZoom={true} 
+                    dragging={true}
+                    style={{ height: '100%', width: '100%' }}
+                    zoomControl={true}
                   >
                     <TileLayer
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       attribution='&copy; OpenStreetMap contributors'
                     />
+                    <CircleMarker center={currentCoords} radius={25} pathOptions={{ color: '#0d9488', fillColor: '#0d9488', fillOpacity: 0.12, weight: 1 }} />
                     <Marker position={currentCoords} icon={pulseIcon}>
                       <Popup>
-                        <div className="font-semibold text-teal-800">Posisi Saat Ini</div>
-                        <div className="text-sm">{currentLokasi}</div>
+                        <div style={{ fontWeight: 600, color: '#0d9488' }}>📍 Posisi Saat Ini</div>
+                        <div style={{ fontSize: '13px', marginTop: '4px' }}>{currentLokasi}</div>
                       </Popup>
                     </Marker>
                   </MapContainer>
