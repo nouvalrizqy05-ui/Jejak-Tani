@@ -102,10 +102,10 @@ export default function HargaReferensi() {
         {/* Main Chart Area */}
         <div className="md:col-span-2 flex flex-col h-full min-h-[450px]">
           {selectedKomoditas && historis.length > 0 && (
-            <div className="card p-4 sm:p-6 h-full flex flex-col flex-1 overflow-hidden min-w-0">
+            <div className="card p-3 sm:p-6 h-full flex flex-col flex-1 overflow-hidden w-full max-w-[calc(100vw-2rem)] md:max-w-none mx-auto">
               
               {/* Mobile Dropdown: Daftar Komoditas */}
-              <div className="md:hidden mb-5 max-w-full">
+              <div className="md:hidden mb-4 w-full">
                 <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Pilih Komoditas</label>
                 <select 
                   value={selectedKomoditas}
@@ -120,10 +120,10 @@ export default function HargaReferensi() {
                 </select>
               </div>
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-1 max-w-full">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-1 w-full">
                 <h2 className="font-semibold text-stone-900 hidden md:block truncate">Tren Harga: {selectedKomoditas}</h2>
                 <h2 className="font-semibold text-stone-900 md:hidden truncate">Tren Harga Historis</h2>
-                <div className="flex bg-stone-100 p-1 rounded-lg overflow-x-auto hide-scrollbar w-full sm:w-auto max-w-full">
+                <div className="flex bg-stone-100 p-1 rounded-lg overflow-x-auto hide-scrollbar w-full sm:w-auto">
                   {filterOptions.map(opt => (
                     <button
                       key={opt.value}
@@ -141,10 +141,10 @@ export default function HargaReferensi() {
               </div>
               <p className="text-xs text-stone-500 mb-6 mt-2 sm:mt-0">Sumber: {historis[0]?.sumber}</p>
               
-              <div className="flex-1 min-h-[300px] w-full relative mt-2">
-                <div className="absolute inset-0 pr-2">
+              <div className="flex-1 min-h-[300px] w-full relative mt-2 overflow-hidden">
+                <div className="absolute inset-0 pr-4">
                   <ResponsiveContainer width="95%" height="100%">
-                    <LineChart data={filteredHistoris} margin={{ top: 5, right: 15, bottom: 5, left: -25 }}>
+                    <LineChart data={filteredHistoris} margin={{ top: 5, right: 10, bottom: 5, left: -25 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" vertical={false} />
                       <XAxis 
                         dataKey="tanggal" 
