@@ -102,10 +102,10 @@ export default function HargaReferensi() {
         {/* Main Chart Area */}
         <div className="md:col-span-2 flex flex-col h-full min-h-[450px]">
           {selectedKomoditas && historis.length > 0 && (
-            <div className="card p-4 sm:p-6 h-full flex flex-col flex-1">
+            <div className="card p-4 sm:p-6 h-full flex flex-col flex-1 overflow-hidden min-w-0">
               
               {/* Mobile Dropdown: Daftar Komoditas */}
-              <div className="md:hidden mb-5">
+              <div className="md:hidden mb-5 max-w-full">
                 <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Pilih Komoditas</label>
                 <select 
                   value={selectedKomoditas}
@@ -120,15 +120,15 @@ export default function HargaReferensi() {
                 </select>
               </div>
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-1">
-                <h2 className="font-semibold text-stone-900 hidden md:block">Tren Harga: {selectedKomoditas}</h2>
-                <h2 className="font-semibold text-stone-900 md:hidden">Tren Harga Historis</h2>
-                <div className="flex bg-stone-100 p-1 rounded-lg overflow-x-auto hide-scrollbar w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-1 max-w-full">
+                <h2 className="font-semibold text-stone-900 hidden md:block truncate">Tren Harga: {selectedKomoditas}</h2>
+                <h2 className="font-semibold text-stone-900 md:hidden truncate">Tren Harga Historis</h2>
+                <div className="flex bg-stone-100 p-1 rounded-lg overflow-x-auto hide-scrollbar w-full sm:w-auto max-w-full">
                   {filterOptions.map(opt => (
                     <button
                       key={opt.value}
                       onClick={() => setFilterWaktu(opt.value)}
-                      className={`flex-1 sm:flex-none px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors ${
+                      className={`flex-none px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors ${
                         filterWaktu === opt.value 
                           ? 'bg-white text-teal-800 shadow-sm' 
                           : 'text-stone-500 hover:text-stone-900'
@@ -141,9 +141,9 @@ export default function HargaReferensi() {
               </div>
               <p className="text-xs text-stone-500 mb-6 mt-2 sm:mt-0">Sumber: {historis[0]?.sumber}</p>
               
-              <div className="flex-1 min-h-[300px] min-w-0 w-full">
+              <div className="flex-1 min-h-[300px] min-w-0 w-full overflow-hidden px-1">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={filteredHistoris} margin={{ top: 5, right: 30, bottom: 5, left: -20 }}>
+                  <LineChart data={filteredHistoris} margin={{ top: 5, right: 10, bottom: 5, left: -25 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" vertical={false} />
                     <XAxis 
                       dataKey="tanggal" 
