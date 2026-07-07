@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { api } from '../api.js';
 import { formatRupiah, formatDate } from '../utils.js';
 import TrustStars from '../components/TrustStars.jsx';
 import TraceTimeline from '../components/TraceTimeline.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
+import { ArrowLeft, ShoppingBag, MapPin, Award, CheckCircle2 } from 'lucide-react';
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [produk, setProduk] = useState(null);
   const [qty, setQty] = useState(1);
   const [sertifikasi, setSertifikasi] = useState([]);
@@ -30,7 +32,17 @@ export default function ProductDetail() {
     load();
   }, [id]);
 
-  if (!produk) return <div className="max-w-5xl mx-auto px-4 py-24 text-center text-stone-400">Memuat produk...</div>;
+  if (!produk) return (
+    <div className="flex flex-col h-full bg-stone-50 animate-pulse">
+      <div className="w-full aspect-square bg-stone-200"></div>
+      <div className="p-5 bg-white rounded-t-3xl -mt-6">
+        <div className="h-6 w-1/3 bg-stone-200 rounded-lg mb-3"></div>
+        <div className="h-8 w-2/3 bg-stone-200 rounded-lg mb-6"></div>
+        <div className="h-4 w-full bg-stone-200 rounded-lg mb-2"></div>
+        <div className="h-4 w-4/5 bg-stone-200 rounded-lg"></div>
+      </div>
+    </div>
+  );
 
   const sisa = produk.jumlah_kg - produk.jumlah_terjual_kg;
 
@@ -41,83 +53,112 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
-      <Link to="/" className="text-sm text-teal-700 hover:underline">&larr; Kembali ke marketplace</Link>
+    <div className="bg-stone-50 min-h-full pb-24">
+      {/* App Bar Over Image */}
+      <div className="absolute top-0 left-0 right-0 z-10 p-4 flex justify-between items-center bg-gradient-to-b from-black/50 to-transparent">
+        <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+      </div>
 
-      <div className="grid md:grid-cols-2 gap-10 mt-6">
-        <div>
-          <div className="card aspect-square flex items-center justify-center text-9xl bg-gradient-to-br from-teal-50 to-leaf-50">
-            {produk.foto_emoji}
-          </div>
-          <div className="card p-5 mt-5 flex items-center gap-4">
-            <img src={`/qrcodes/${produk.id}.png`} alt="QR traceability produk" className="w-24 h-24 rounded-lg border border-stone-200" />
-            <div>
-              <p className="font-display font-semibold text-stone-900">Jejak digital produk ini</p>
-              <div className="flex gap-2 text-sm text-stone-500 mb-6">
-                <span className="bg-stone-100 px-3 py-1 rounded-full uppercase tracking-wider text-xs font-bold text-stone-700">
-                  Grade {produk.grade}
-                </span>
-                <span className="bg-teal-50 text-teal-800 px-3 py-1 rounded-full text-xs font-semibold">
-                  Sisa {sisa} kg
-                </span>
-                {sertifikasi.map(cert => (
-                  <span key={cert.id} className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1" title={cert.penerbit}>
-                    🏆 Terverifikasi {cert.jenis}
-                  </span>
-                ))}
-              </div>
-              <Link to={`/trace/${produk.id}`} className="text-sm text-teal-700 hover:underline mt-1 inline-block">
-                Lihat halaman jejak publik &rarr;
-              </Link>
+      {/* Hero Image / Emoji */}
+      <div className="w-full aspect-square flex items-center justify-center text-9xl bg-gradient-to-br from-teal-100 to-harvest-100">
+        <span className="drop-shadow-2xl hover:scale-110 transition-transform duration-500">{produk.foto_emoji}</span>
+      </div>
+
+      {/* Content Container (Pulls up over image) */}
+      <div className="bg-white rounded-t-[2rem] -mt-8 relative z-20 px-5 pt-8 pb-10 shadow-sm border-t border-white/50">
+        <div className="flex items-center justify-between mb-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-leaf-50 text-leaf-700 text-xs font-bold uppercase tracking-wide">
+            <Award className="w-3.5 h-3.5" /> Grade {produk.grade}
+          </span>
+          <span className="text-sm font-medium text-stone-500">Sisa {sisa} kg</span>
+        </div>
+
+        <h1 className="font-display text-2xl font-bold text-stone-900 leading-tight mb-2">{produk.nama}</h1>
+        
+        <div className="flex items-center gap-2 mb-6">
+          <MapPin className="w-4 h-4 text-stone-400" />
+          <span className="text-sm text-stone-600">{produk.petani?.desa}</span>
+          <span className="text-stone-300">&bull;</span>
+          <TrustStars rataRata={produk.petani?.trust?.rata_rata} jumlah={produk.petani?.trust?.jumlah_ulasan} size="sm" />
+        </div>
+
+        <div className="flex items-baseline gap-1.5 mb-6">
+          <span className="font-display text-3xl font-bold text-teal-700">{formatRupiah(produk.harga_per_kg)}</span>
+          <span className="text-stone-500 text-sm">/ kg</span>
+        </div>
+
+        <p className="text-stone-600 text-sm leading-relaxed mb-6">{produk.deskripsi}</p>
+
+        {/* Certifications (if any) */}
+        {sertifikasi.length > 0 && (
+          <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-100">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-800 mb-3">Sertifikasi</h3>
+            <div className="space-y-2">
+              {sertifikasi.map(cert => (
+                <div key={cert.id} className="flex gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-amber-900">{cert.jenis}</p>
+                    <p className="text-xs text-amber-700">{cert.penerbit}</p>
+                  </div>
+                </div>
+              ))}
             </div>
+          </div>
+        )}
+
+        {/* Traceability Entry Point */}
+        <div className="card p-4 flex gap-4 items-center mb-8 border-teal-100 bg-teal-50/50">
+          <img src={`/qrcodes/${produk.id}.png`} alt="QR Code" className="w-16 h-16 rounded-xl border border-teal-200 bg-white" />
+          <div className="flex-1">
+            <p className="font-semibold text-stone-900 text-sm mb-1">Traceability Terverifikasi</p>
+            <Link to={`/trace/${produk.id}`} className="text-xs font-medium text-teal-700 bg-teal-100 px-3 py-1.5 rounded-lg inline-flex items-center gap-1 hover:bg-teal-200 transition-colors">
+              Lihat Jejak Penuh &rarr;
+            </Link>
           </div>
         </div>
 
-        <div>
-          <span className="badge bg-leaf-100 text-leaf-800">Grade {produk.grade}</span>
-          <h1 className="font-display text-3xl font-semibold text-stone-900 mt-3">{produk.nama}</h1>
-          <div className="flex items-center gap-3 mt-2">
-            <TrustStars rataRata={produk.petani?.trust?.rata_rata} jumlah={produk.petani?.trust?.jumlah_ulasan} size="md" />
-            <span className="text-stone-300">&bull;</span>
-            <span className="text-sm text-stone-500">{produk.petani?.nama}, {produk.petani?.desa}</span>
-          </div>
-          <p className="text-stone-600 mt-4 leading-relaxed">{produk.deskripsi}</p>
-
-          <div className="mt-6 flex items-baseline gap-2">
-            <span className="font-display text-3xl font-semibold text-teal-800">{formatRupiah(produk.harga_per_kg)}</span>
-            <span className="text-stone-400">/ kg</span>
-          </div>
-          <p className="text-sm text-stone-500 mt-1">Sisa stok: {sisa} kg &bull; Dipanen {formatDate(produk.tanggal_panen)}</p>
-
-          {user?.role === 'buyer' ? (
-            <div className="mt-6 flex items-center gap-3">
-              <div className="flex items-center border border-stone-300 rounded-full overflow-hidden">
-                <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="w-9 h-9 hover:bg-stone-50">&minus;</button>
-                <input
-                  type="number" min="1" max={sisa} value={qty}
-                  onChange={(e) => setQty(Math.min(sisa, Math.max(1, Number(e.target.value))))}
-                  className="w-14 text-center outline-none"
-                />
-                <button onClick={() => setQty((q) => Math.min(sisa, q + 1))} className="w-9 h-9 hover:bg-stone-50">+</button>
-              </div>
-              <span className="text-sm text-stone-500">kg</span>
-              <button onClick={handleAdd} className="btn-primary flex-1" disabled={sisa === 0}>
-                {sisa === 0 ? 'Stok habis' : added ? 'Ditambahkan ✓' : 'Tambah ke Keranjang'}
-              </button>
-            </div>
-          ) : !user ? (
-            <div className="mt-6">
-              <Link to="/masuk" className="btn-primary">Masuk untuk membeli</Link>
-            </div>
-          ) : (
-            <p className="mt-6 text-sm text-stone-500">Masuk sebagai buyer untuk membeli produk ini.</p>
-          )}
+        <h2 className="font-display text-lg font-semibold text-stone-900 mb-4">Riwayat Perjalanan</h2>
+        <div className="pl-2">
+          <TraceTimeline perjalanan={produk.traceability} />
         </div>
       </div>
 
-      <div className="mt-16">
-        <h2 className="font-display text-2xl font-semibold text-stone-900 mb-6">Riwayat Perjalanan Produk</h2>
-        <TraceTimeline perjalanan={produk.traceability} />
+      {/* Sticky Bottom Add to Cart (Only for Buyers) */}
+      <div className="fixed bottom-16 left-0 right-0 z-30 flex justify-center pointer-events-none">
+        <div className="w-full max-w-md bg-white/90 backdrop-blur-md border-t border-stone-200 p-4 pointer-events-auto">
+          {user?.role === 'buyer' ? (
+            <div className="flex gap-3 h-12">
+              <div className="flex items-center border border-stone-300 rounded-xl bg-white w-32 shrink-0 overflow-hidden">
+                <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-10 h-full flex items-center justify-center text-stone-500 hover:bg-stone-50 active:bg-stone-100 transition-colors">&minus;</button>
+                <div className="flex-1 text-center font-semibold text-sm border-x border-stone-100 h-full flex items-center justify-center">{qty}</div>
+                <button onClick={() => setQty(q => Math.min(sisa, q + 1))} className="w-10 h-full flex items-center justify-center text-stone-500 hover:bg-stone-50 active:bg-stone-100 transition-colors">+</button>
+              </div>
+              <button 
+                onClick={handleAdd} 
+                disabled={sisa === 0 || added}
+                className={`flex-1 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all shadow-lg ${
+                  sisa === 0 ? 'bg-stone-200 text-stone-400 cursor-not-allowed shadow-none' : 
+                  added ? 'bg-green-500 text-white shadow-green-500/30' : 
+                  'bg-teal-700 text-white hover:bg-teal-800 shadow-teal-900/20 active:scale-95'
+                }`}
+              >
+                {added ? <CheckCircle2 className="w-5 h-5" /> : <ShoppingBag className="w-5 h-5" />}
+                {sisa === 0 ? 'Habis' : added ? 'Ditambahkan' : 'Keranjang'}
+              </button>
+            </div>
+          ) : !user ? (
+            <Link to="/masuk" className="w-full h-12 rounded-xl bg-teal-700 text-white font-semibold text-sm flex items-center justify-center hover:bg-teal-800 shadow-lg shadow-teal-900/20 transition-all active:scale-95">
+              Masuk untuk Membeli
+            </Link>
+          ) : (
+            <div className="h-12 flex items-center justify-center bg-stone-100 rounded-xl text-stone-500 text-sm font-medium">
+              Beralih ke akun Pembeli untuk transaksi.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

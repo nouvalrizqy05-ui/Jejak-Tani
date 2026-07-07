@@ -35,12 +35,15 @@ export default function Login() {
   ];
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-16">
-      <div className="w-full max-w-sm">
-        <div className="flex justify-center mb-6"><Logo size={40} /></div>
-        <div className="card p-7">
-          <h1 className="font-display text-xl font-semibold text-stone-900 text-center">Masuk ke akun Anda</h1>
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+    <div className="flex-1 flex flex-col justify-center px-6 py-10 min-h-full">
+      <div className="w-full">
+        <div className="flex justify-center mb-6"><Logo size={48} /></div>
+        
+        <div className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-sm border border-stone-100 relative">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-teal-100 text-teal-800 text-[10px] font-bold rounded-full uppercase tracking-widest border border-white">Selamat Datang</div>
+          <h1 className="font-display text-2xl font-bold text-stone-900 text-center mt-2">Masuk ke Akun</h1>
+          
+          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             <div>
               <label className="label">Email</label>
               <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="input" />
@@ -57,21 +60,20 @@ export default function Login() {
           </p>
         </div>
 
-        <div className="card p-5 mt-4 bg-stone-50">
-          <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-2">Akun demo</p>
-          <ul className="text-xs text-stone-500 space-y-1">
+        <div className="mt-6 bg-stone-50 rounded-2xl p-5 border border-stone-100">
+          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-3">Login Cepat (Demo)</p>
+          <div className="grid grid-cols-2 gap-2 text-xs">
             {demoAccounts.map(([label, em, pw]) => (
-              <li key={em}>
-                <button
-                  type="button"
-                  onClick={() => { setEmail(em); setPassword(pw); }}
-                  className="hover:text-teal-700 underline decoration-dotted"
-                >
-                  {label}: {em} / {pw}
-                </button>
-              </li>
+              <button
+                key={em}
+                type="button"
+                onClick={() => { setEmail(em); setPassword(pw); }}
+                className="p-2 rounded-lg bg-white border border-stone-200 text-stone-600 hover:border-teal-300 hover:text-teal-700 transition-colors text-left font-medium"
+              >
+                {label}
+              </button>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
     </div>
