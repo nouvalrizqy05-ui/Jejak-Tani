@@ -7,7 +7,7 @@ const router = Router();
 // GET /api/sertifikasi/produk/:produkId - Dapatkan sertifikasi untuk sebuah produk (Public)
 router.get('/produk/:produkId', (req, res) => {
   try {
-    const sertifikasi = db.prepare('SELECT * FROM sertifikasi_produk WHERE produk_id = ? AND status = "terverifikasi"').all(req.params.produkId);
+    const sertifikasi = db.prepare('SELECT * FROM sertifikasi_produk WHERE produk_id = ? AND status = \'terverifikasi\'').all(req.params.produkId);
     res.json(sertifikasi);
   } catch (err) {
     res.status(500).json({ error: 'Terjadi kesalahan.' });
