@@ -39,8 +39,8 @@ for csv_file in csv_files:
     daily_avg['komoditas'] = our_name
     daily_avg['sumber'] = 'PIHPS - Bank Indonesia'
     
-    # Only take data from 2025 onwards to keep it manageable (last ~1 year)
-    daily_avg = daily_avg[daily_avg['tanggal'] >= '2025-01-01']
+    # Take data from 2022 onwards as requested by user
+    daily_avg = daily_avg[daily_avg['tanggal'] >= '2022-01-01']
     
     all_records.extend(daily_avg.to_dict('records'))
     print(f"  Records (2025+): {len(daily_avg)}")

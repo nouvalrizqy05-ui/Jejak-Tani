@@ -53,7 +53,6 @@ export default function HargaReferensi() {
     setIsSyncing(true);
     setTimeout(() => {
       setIsSyncing(false);
-      // Anda bisa mengganti alert dengan toast UI jika sudah ada
       alert('Tersinkronisasi! Data harga telah diperbarui secara real-time dari API PIHPS (Simulasi).');
     }, 2000);
   };
@@ -81,7 +80,9 @@ export default function HargaReferensi() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6 mt-8">
-        <div className="space-y-2 md:col-span-1 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+        
+        {/* Desktop Sidebar: Daftar Komoditas */}
+        <div className="hidden md:block space-y-2 md:col-span-1 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
           <h2 className="font-semibold text-stone-900 mb-3 sticky top-0 bg-white z-10 py-1">Komoditas</h2>
           {harga.map((h) => (
             <div 
@@ -98,17 +99,36 @@ export default function HargaReferensi() {
           ))}
         </div>
 
+        {/* Main Chart Area */}
         <div className="md:col-span-2 flex flex-col h-full min-h-[450px]">
           {selectedKomoditas && historis.length > 0 && (
-            <div className="card p-6 h-full flex flex-col flex-1">
+            <div className="card p-4 sm:p-6 h-full flex flex-col flex-1">
+              
+              {/* Mobile Dropdown: Daftar Komoditas */}
+              <div className="md:hidden mb-5">
+                <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Pilih Komoditas</label>
+                <select 
+                  value={selectedKomoditas}
+                  onChange={(e) => setSelectedKomoditas(e.target.value)}
+                  className="block w-full rounded-lg border-stone-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm bg-stone-50 py-2.5 px-3"
+                >
+                  {harga.map(h => (
+                    <option key={h.komoditas} value={h.komoditas}>
+                      {h.komoditas} - {formatRupiah(h.harga_per_kg)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-1">
-                <h2 className="font-semibold text-stone-900">Tren Harga: {selectedKomoditas}</h2>
-                <div className="flex bg-stone-100 p-1 rounded-lg overflow-x-auto hide-scrollbar">
+                <h2 className="font-semibold text-stone-900 hidden md:block">Tren Harga: {selectedKomoditas}</h2>
+                <h2 className="font-semibold text-stone-900 md:hidden">Tren Harga Historis</h2>
+                <div className="flex bg-stone-100 p-1 rounded-lg overflow-x-auto hide-scrollbar w-full sm:w-auto">
                   {filterOptions.map(opt => (
                     <button
                       key={opt.value}
                       onClick={() => setFilterWaktu(opt.value)}
-                      className={`px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors ${
+                      className={`flex-1 sm:flex-none px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors ${
                         filterWaktu === opt.value 
                           ? 'bg-white text-teal-800 shadow-sm' 
                           : 'text-stone-500 hover:text-stone-900'
@@ -119,16 +139,16 @@ export default function HargaReferensi() {
                   ))}
                 </div>
               </div>
-              <p className="text-xs text-stone-500 mb-6">Sumber: {historis[0]?.sumber}</p>
+              <p className="text-xs text-stone-500 mb-6 mt-2 sm:mt-0">Sumber: {historis[0]?.sumber}</p>
               
               <div className="flex-1 min-h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={filteredHistoris} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                  <LineChart data={filteredHistoris} margin={{ top: 5, right: 10, bottom: 5, left: -20 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" vertical={false} />
                     <XAxis 
                       dataKey="tanggal" 
                       tickFormatter={(val) => formatDate(val).slice(0, 6)}
-                      tick={{fontSize: 12, fill: '#78716c'}}
+                      tick={{fontSize: 11, fill: '#78716c'}}
                       axisLine={false}
                       tickLine={false}
                       dy={10}
@@ -136,7 +156,7 @@ export default function HargaReferensi() {
                     />
                     <YAxis 
                       tickFormatter={(val) => `Rp${val/1000}k`}
-                      tick={{fontSize: 12, fill: '#78716c'}}
+                      tick={{fontSize: 11, fill: '#78716c'}}
                       axisLine={false}
                       tickLine={false}
                       domain={['auto', 'auto']}
@@ -145,7 +165,7 @@ export default function HargaReferensi() {
                     <Tooltip 
                       formatter={(value) => [formatRupiah(value), 'Harga']}
                       labelFormatter={(label) => formatDate(label)}
-                      contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                      contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px'}}
                     />
                     <Line 
                       type="monotone" 
@@ -163,8 +183,8 @@ export default function HargaReferensi() {
         </div>
       </div>
 
-      <div className="card p-5 mt-8 bg-teal-50 text-sm text-teal-800 flex items-start gap-3">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+      <div className="card p-4 sm:p-5 mt-8 bg-teal-50 text-sm text-teal-800 flex items-start gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
         <p>
           <strong>Data Terintegrasi.</strong> Harga di atas merupakan data riil rata-rata nasional yang ditarik dari Sistem Pusat Informasi Harga Pangan Strategis (PIHPS) Bank Indonesia.
         </p>
