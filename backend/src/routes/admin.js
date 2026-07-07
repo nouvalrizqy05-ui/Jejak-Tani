@@ -62,8 +62,19 @@ router.get('/pesanan', (req, res) => {
 
 router.get('/petani', (req, res) => {
   const rows = db.prepare(`
-    SELECT petani.id, petani.desa, users.nama, users.no_hp, petani.tanggal_daftar
-    FROM petani JOIN users ON users.id = petani.user_id
+    SELECT 
+      petani.id, 
+      petani.desa, 
+      petani.nik, 
+      users.nama as user_nama, 
+      users.no_hp, 
+      petani.tanggal_daftar,
+      IFNULL(SUM(lahan.luas_ha), 0) as total_lahan_ha,
+      GROUP_CONCAT(DISTINCT lahan.komoditas) as komoditas_utama
+    FROM petani 
+    JOIN users ON users.id = petani.user_id
+    LEFT JOIN lahan ON lahan.petani_id = petani.id
+    GROUP BY petani.id
     ORDER BY petani.tanggal_daftar DESC
   `).all();
   res.json(rows);
