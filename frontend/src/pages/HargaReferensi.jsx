@@ -141,9 +141,9 @@ export default function HargaReferensi() {
               </div>
               <p className="text-xs text-stone-500 mb-6 mt-2 sm:mt-0">Sumber: {historis[0]?.sumber}</p>
               
-              <div className="flex-1 min-h-[300px]">
+              <div className="flex-1 min-h-[300px] min-w-0 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={filteredHistoris} margin={{ top: 5, right: 10, bottom: 5, left: -20 }}>
+                  <LineChart data={filteredHistoris} margin={{ top: 5, right: 30, bottom: 5, left: -20 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" vertical={false} />
                     <XAxis 
                       dataKey="tanggal" 
