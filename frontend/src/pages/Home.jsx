@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-full">
       {/* Hero Section */}
-      <section className="relative px-5 md:px-12 pt-8 md:pt-16 pb-12 md:pb-20 bg-teal-700 text-white overflow-hidden">
+      <section className="relative px-5 md:px-12 pt-8 md:pt-16 pb-12 md:pb-20 bg-teal-700 text-white overflow-hidden rounded-b-[2.5rem] md:rounded-b-[4rem]">
         {/* Subtle mesh background effect */}
         <div className="absolute inset-0 opacity-20 pointer-events-none" style={{
           backgroundImage: 'radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 20%)'
@@ -54,29 +54,29 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Feature Highlights */}
-      <section className="px-4 md:px-12 -mt-6 relative z-20">
-        <div className="max-w-5xl mx-auto grid grid-cols-3 gap-2 md:gap-6">
-          <div className="bg-white p-3 md:p-6 rounded-xl md:rounded-2xl shadow-sm border border-stone-100">
-            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 mb-2 md:mb-3">
-              <ShieldCheck className="w-4 h-4 md:w-5 md:h-5" />
+      {/* Feature Highlights (Horizontal Scroll on Mobile, Grid on Desktop) */}
+      <section className="px-5 md:px-12 -mt-6 md:-mt-10 relative z-20 max-w-5xl mx-auto">
+        <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-6 overflow-x-auto pb-4 snap-x hide-scrollbar">
+          <div className="min-w-[240px] md:min-w-0 bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-stone-100 snap-start shrink-0">
+            <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 mb-3">
+              <ShieldCheck className="w-5 h-5" />
             </div>
-            <h3 className="font-semibold text-stone-900 text-xs md:text-sm mb-0.5 md:mb-1">Traceability</h3>
-            <p className="text-[10px] md:text-xs text-stone-500 hidden sm:block">Lacak produk via QR Code.</p>
+            <h3 className="font-semibold text-stone-900 text-sm mb-1">Traceability Penuh</h3>
+            <p className="text-xs text-stone-500">Lacak perjalanan produk menggunakan QR Code eksklusif.</p>
           </div>
-          <div className="bg-white p-3 md:p-6 rounded-xl md:rounded-2xl shadow-sm border border-stone-100">
-            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-harvest-50 flex items-center justify-center text-harvest-600 mb-2 md:mb-3">
-              <TrendingDown className="w-4 h-4 md:w-5 md:h-5" />
+          <div className="min-w-[240px] md:min-w-0 bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-stone-100 snap-start shrink-0">
+            <div className="w-10 h-10 rounded-full bg-harvest-50 flex items-center justify-center text-harvest-600 mb-3">
+              <TrendingDown className="w-5 h-5" />
             </div>
-            <h3 className="font-semibold text-stone-900 text-xs md:text-sm mb-0.5 md:mb-1">Tanpa Tengkulak</h3>
-            <p className="text-[10px] md:text-xs text-stone-500 hidden sm:block">Harga langsung dari petani.</p>
+            <h3 className="font-semibold text-stone-900 text-sm mb-1">Pangkas Tengkulak</h3>
+            <p className="text-xs text-stone-500">Harga langsung dari petani, adil dan menguntungkan dua belah pihak.</p>
           </div>
-          <div className="bg-white p-3 md:p-6 rounded-xl md:rounded-2xl shadow-sm border border-stone-100">
-            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2 md:mb-3">
-              <MapPin className="w-4 h-4 md:w-5 md:h-5" />
+          <div className="min-w-[240px] md:min-w-0 bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-stone-100 snap-start shrink-0">
+            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-3">
+              <MapPin className="w-5 h-5" />
             </div>
-            <h3 className="font-semibold text-stone-900 text-xs md:text-sm mb-0.5 md:mb-1">Data Spasial</h3>
-            <p className="text-[10px] md:text-xs text-stone-500 hidden sm:block">Lokasi lahan panen terintegrasi.</p>
+            <h3 className="font-semibold text-stone-900 text-sm mb-1">Data Spasial</h3>
+            <p className="text-xs text-stone-500">Sistem terhubung langsung dengan lokasi lahan panen.</p>
           </div>
         </div>
       </section>
