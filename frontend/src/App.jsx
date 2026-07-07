@@ -21,7 +21,7 @@ import RuteOptimasi from './pages/RuteOptimasi.jsx';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-white md:bg-stone-100 selection:bg-teal-200 selection:text-teal-900 flex flex-col">
+    <div className="min-h-screen bg-white md:bg-stone-100 selection:bg-teal-200 selection:text-teal-900 flex flex-col overflow-x-hidden">
       <Navbar />
       <main className="flex-1 w-full md:max-w-7xl md:mx-auto md:bg-white md:shadow-xl pb-20 md:pb-8">
         <Routes>

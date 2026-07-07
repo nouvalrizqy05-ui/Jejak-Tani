@@ -55,8 +55,8 @@ export default function Home() {
       </section>
 
       {/* Feature Highlights (Horizontal Scroll on Mobile, Grid on Desktop) */}
-      <section className="px-5 md:px-12 -mt-6 md:-mt-10 relative z-20 max-w-5xl mx-auto">
-        <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-6 overflow-x-auto pb-4 snap-x hide-scrollbar">
+      <section className="w-full px-5 md:px-12 -mt-6 md:-mt-10 relative z-20 max-w-5xl mx-auto">
+        <div className="w-full flex md:grid md:grid-cols-3 gap-4 md:gap-6 overflow-x-auto pb-4 snap-x hide-scrollbar">
           <div className="min-w-[240px] md:min-w-0 bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-stone-100 snap-start shrink-0">
             <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 mb-3">
               <ShieldCheck className="w-5 h-5" />
