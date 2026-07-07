@@ -116,7 +116,8 @@ CREATE TABLE IF NOT EXISTS pesanan (
     CHECK(status IN ('menunggu_pembayaran','dibayar','disiapkan','dikirim','selesai','dibatalkan')),
   tipe_pengiriman TEXT DEFAULT 'reguler' CHECK(tipe_pengiriman IN ('same_day','reguler','tanpa_kontak')),
   catatan_alamat TEXT,
-  tanggal_pesan TEXT DEFAULT (datetime('now'))
+  tanggal_pesan TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS pengiriman (

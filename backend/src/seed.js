@@ -134,16 +134,16 @@ async function seed() {
         `Hasil panen langsung dari ${petani.nama}, ${petani.desa}.`, p.emoji);
 
     const stages = [
-      ['panen', petani.desa, 'Dipanen dan dicatat oleh petani'],
-      ['grading', petani.desa, 'Lolos grading kualitas ' + p.grade],
-      ['gudang', p.idx === 2 ? 'Gudang Agregasi Tabanan' : 'Gudang Agregasi Cianjur', 'Diterima dan disimpan di gudang agregasi'],
+      ['panen', petani.desa, 'Dipanen dan dicatat oleh petani', 28.5, 'Cerah, 28°C', 'Optimal — Suhu lingkungan normal'],
+      ['grading', petani.desa, 'Lolos grading kualitas ' + p.grade, 26.2, 'Berawan, 26°C', 'Optimal — Suhu terjaga'],
+      ['gudang', p.idx === 2 ? 'Gudang Agregasi Tabanan' : 'Gudang Agregasi Cianjur', 'Diterima dan disimpan di gudang agregasi', 8.0, 'Gudang Berpendingin', 'Optimal — Cold storage aktif 8°C'],
     ];
     if (p.status === 'dipasarkan') {
-      stages.push(['dipasarkan', 'Marketplace Jejak Tani', 'Produk tayang di marketplace']);
+      stages.push(['dipasarkan', 'Marketplace Jejak Tani', 'Produk tayang di marketplace', 5.5, 'Kontainer Pendingin', 'Optimal — Rantai dingin terjaga 5.5°C']);
     }
-    for (const [tahap, lokasi, catatan] of stages) {
-      db.prepare(`INSERT INTO traceability_log (id,produk_id,tahap,lokasi,catatan) VALUES (?,?,?,?,?)`)
-        .run(uid('trc'), produkId, tahap, lokasi, catatan);
+    for (const [tahap, lokasi, catatan, suhu, cuaca, kondisi] of stages) {
+      db.prepare(`INSERT INTO traceability_log (id,produk_id,tahap,lokasi,catatan,suhu_celcius,cuaca,kondisi_cold_chain) VALUES (?,?,?,?,?,?,?,?)`)
+        .run(uid('trc'), produkId, tahap, lokasi, catatan, suhu, cuaca, kondisi);
     }
     produkIds.push(produkId);
   }
