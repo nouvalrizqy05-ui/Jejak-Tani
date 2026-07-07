@@ -1,12 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { api } from '../api.js';
 import { formatRupiah, formatDate } from '../utils.js';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { RefreshCw } from 'lucide-react';
 
 export default function HargaReferensi() {
   const [harga, setHarga] = useState([]);
   const [historis, setHistoris] = useState([]);
   const [selectedKomoditas, setSelectedKomoditas] = useState(null);
+  const [filterWaktu, setFilterWaktu] = useState('1B');
+  const [isSyncing, setIsSyncing] = useState(false);
 
   useEffect(() => { 
     api.listHarga().then(data => {
@@ -21,18 +24,65 @@ export default function HargaReferensi() {
     }
   }, [selectedKomoditas]);
 
+  const filterOptions = [
+    { label: '7 Hari', value: '7H', days: 7 },
+    { label: '1 Bulan', value: '1B', days: 30 },
+    { label: '3 Bulan', value: '3B', days: 90 },
+    { label: '6 Bulan', value: '6B', days: 180 },
+    { label: '1 Tahun', value: '1T', days: 365 },
+    { label: 'Maks', value: 'MAKS', days: Infinity }
+  ];
+
+  const filteredHistoris = useMemo(() => {
+    if (!historis.length) return [];
+    if (filterWaktu === 'MAKS') return historis;
+    
+    // Gunakan tanggal terbaru di database sebagai "sekarang"
+    const maxDate = new Date(historis[historis.length - 1].tanggal);
+    const selectedFilter = filterOptions.find(f => f.value === filterWaktu);
+    
+    return historis.filter(h => {
+      const date = new Date(h.tanggal);
+      const diffTime = Math.abs(maxDate - date);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays <= selectedFilter.days;
+    });
+  }, [historis, filterWaktu]);
+
+  const handleSync = () => {
+    setIsSyncing(true);
+    setTimeout(() => {
+      setIsSyncing(false);
+      // Anda bisa mengganti alert dengan toast UI jika sudah ada
+      alert('Tersinkronisasi! Data harga telah diperbarui secara real-time dari API PIHPS (Simulasi).');
+    }, 2000);
+  };
+
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-      <span className="badge bg-teal-100 text-teal-800">Transparansi Harga</span>
-      <h1 className="font-display text-3xl font-semibold text-stone-900 mt-3">Harga Referensi Pasar</h1>
-      <p className="text-stone-600 mt-3 leading-relaxed max-w-xl">
-        Lihat harga acuan sebelum Anda menjual atau membeli. Data ini membantu memastikan tidak
-        ada pihak yang membentuk harga secara sepihak &mdash; inti dari melawan rantai tengkulak berlapis.
-      </p>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div>
+          <span className="badge bg-teal-100 text-teal-800">Transparansi Harga</span>
+          <h1 className="font-display text-3xl font-semibold text-stone-900 mt-3">Harga Referensi Pasar</h1>
+          <p className="text-stone-600 mt-3 leading-relaxed max-w-xl">
+            Lihat harga acuan sebelum Anda menjual atau membeli. Data ini membantu memastikan tidak
+            ada pihak yang membentuk harga secara sepihak.
+          </p>
+        </div>
+        
+        <button 
+          onClick={handleSync}
+          disabled={isSyncing}
+          className="btn btn-secondary self-start flex items-center gap-2 whitespace-nowrap"
+        >
+          <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+          {isSyncing ? 'Menyinkronkan...' : 'Sinkronisasi PIHPS'}
+        </button>
+      </div>
 
       <div className="grid md:grid-cols-3 gap-6 mt-8">
-        <div className="space-y-2 md:col-span-1">
-          <h2 className="font-semibold text-stone-900 mb-3">Komoditas</h2>
+        <div className="space-y-2 md:col-span-1 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+          <h2 className="font-semibold text-stone-900 mb-3 sticky top-0 bg-white z-10 py-1">Komoditas</h2>
           {harga.map((h) => (
             <div 
               key={h.komoditas} 
@@ -42,21 +92,38 @@ export default function HargaReferensi() {
               <p className="font-display font-semibold text-stone-900">{h.komoditas}</p>
               <div className="mt-1 flex justify-between items-end">
                 <span className="font-display text-lg font-semibold text-teal-800">{formatRupiah(h.harga_per_kg)}</span>
-                <span className="text-xs text-stone-500">Harga Hari Ini</span>
+                <span className="text-xs text-stone-500">Harga Terkini</span>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 flex flex-col h-full min-h-[450px]">
           {selectedKomoditas && historis.length > 0 && (
-            <div className="card p-6 h-full min-h-[400px] flex flex-col">
-              <h2 className="font-semibold text-stone-900 mb-1">Tren Harga 30 Hari: {selectedKomoditas}</h2>
+            <div className="card p-6 h-full flex flex-col flex-1">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-1">
+                <h2 className="font-semibold text-stone-900">Tren Harga: {selectedKomoditas}</h2>
+                <div className="flex bg-stone-100 p-1 rounded-lg overflow-x-auto hide-scrollbar">
+                  {filterOptions.map(opt => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setFilterWaktu(opt.value)}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors ${
+                        filterWaktu === opt.value 
+                          ? 'bg-white text-teal-800 shadow-sm' 
+                          : 'text-stone-500 hover:text-stone-900'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <p className="text-xs text-stone-500 mb-6">Sumber: {historis[0]?.sumber}</p>
               
               <div className="flex-1 min-h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={historis} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                  <LineChart data={filteredHistoris} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" vertical={false} />
                     <XAxis 
                       dataKey="tanggal" 
@@ -65,6 +132,7 @@ export default function HargaReferensi() {
                       axisLine={false}
                       tickLine={false}
                       dy={10}
+                      minTickGap={30}
                     />
                     <YAxis 
                       tickFormatter={(val) => `Rp${val/1000}k`}
@@ -72,6 +140,7 @@ export default function HargaReferensi() {
                       axisLine={false}
                       tickLine={false}
                       domain={['auto', 'auto']}
+                      width={60}
                     />
                     <Tooltip 
                       formatter={(value) => [formatRupiah(value), 'Harga']}
@@ -82,8 +151,8 @@ export default function HargaReferensi() {
                       type="monotone" 
                       dataKey="harga_per_kg" 
                       stroke="#0f766e" 
-                      strokeWidth={3} 
-                      dot={{ r: 2, fill: '#0f766e', strokeWidth: 0 }} 
+                      strokeWidth={2} 
+                      dot={false}
                       activeDot={{ r: 6, fill: '#0f766e', stroke: '#ccfbf1', strokeWidth: 4 }}
                     />
                   </LineChart>
