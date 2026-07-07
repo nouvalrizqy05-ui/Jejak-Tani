@@ -85,9 +85,11 @@ async function seed() {
     const insertHarga = db.prepare(
       `INSERT INTO harga_referensi (id,komoditas,harga_per_kg,tanggal,sumber) VALUES (?,?,?,?,?)`
     );
+    db.exec('BEGIN TRANSACTION;');
     for (const h of hargaData) {
       insertHarga.run(uid('hrg'), h.komoditas, h.harga_per_kg, h.tanggal, h.sumber);
     }
+    db.exec('COMMIT;');
     console.log('  Data harga PIHPS berhasil dimuat!');
   } else {
     console.warn('  [PERINGATAN] File harga_pihps.json tidak ditemukan. Menggunakan data simulasi...');
