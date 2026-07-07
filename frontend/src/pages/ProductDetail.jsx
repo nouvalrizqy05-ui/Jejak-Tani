@@ -172,6 +172,7 @@ export default function ProductDetail() {
           )}
         </div>
       </div>
+      </div>
 
       {/* Sticky Bottom Add to Cart (Only for Mobile) */}
       <div className="md:hidden fixed bottom-16 left-0 right-0 z-30 flex justify-center pointer-events-none">
