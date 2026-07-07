@@ -77,22 +77,36 @@ async function seed() {
     armadaIds.push(id);
   }
 
-  // --- Harga referensi (30 hari terakhir) ---
-  const hargaSeed = [
-    ['Beras', 12500], ['Cabai Merah', 38000], ['Kopi Arabika', 95000], ['Sayur Kol', 6500],
-  ];
-  for (const [komoditas, basePrice] of hargaSeed) {
-    for (let i = 29; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      const dateString = date.toISOString().slice(0, 10);
-      
-      // Simulasi fluktuasi harga acak +/- 5%
-      const fluctuation = basePrice * (Math.random() * 0.1 - 0.05);
-      const finalPrice = Math.round((basePrice + fluctuation) / 100) * 100;
-
-      db.prepare(`INSERT INTO harga_referensi (id,komoditas,harga_per_kg,tanggal,sumber) VALUES (?,?,?,?,?)`)
-        .run(uid('hrg'), komoditas, finalPrice, dateString, 'Panel Harga Pangan Nasional (simulasi)');
+  // --- Harga referensi REAL dari PIHPS Bank Indonesia ---
+  const hargaJsonPath = path.join(__dirname, '..', 'data', 'harga_pihps.json');
+  if (fs.existsSync(hargaJsonPath)) {
+    const hargaData = JSON.parse(fs.readFileSync(hargaJsonPath, 'utf-8'));
+    console.log(`  Memuat ${hargaData.length} data harga PIHPS (Bank Indonesia)...`);
+    const insertHarga = db.prepare(
+      `INSERT INTO harga_referensi (id,komoditas,harga_per_kg,tanggal,sumber) VALUES (?,?,?,?,?)`
+    );
+    for (const h of hargaData) {
+      insertHarga.run(uid('hrg'), h.komoditas, h.harga_per_kg, h.tanggal, h.sumber);
+    }
+    console.log('  Data harga PIHPS berhasil dimuat!');
+  } else {
+    console.warn('  [PERINGATAN] File harga_pihps.json tidak ditemukan. Menggunakan data simulasi...');
+    const hargaSeed = [
+      ['Beras', 12500], ['Cabai Merah', 38000], ['Cabai Rawit', 45000],
+      ['Bawang Merah', 42000], ['Bawang Putih', 38000], ['Daging Ayam', 35000],
+      ['Daging Sapi', 130000], ['Telur Ayam', 28000], ['Minyak Goreng', 20000],
+      ['Gula Pasir', 18000],
+    ];
+    for (const [komoditas, basePrice] of hargaSeed) {
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateString = date.toISOString().slice(0, 10);
+        const fluctuation = basePrice * (Math.random() * 0.1 - 0.05);
+        const finalPrice = Math.round((basePrice + fluctuation) / 100) * 100;
+        db.prepare(`INSERT INTO harga_referensi (id,komoditas,harga_per_kg,tanggal,sumber) VALUES (?,?,?,?,?)`)
+          .run(uid('hrg'), komoditas, finalPrice, dateString, 'Panel Harga Pangan Nasional (simulasi)');
+      }
     }
   }
 

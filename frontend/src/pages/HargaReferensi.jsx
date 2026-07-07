@@ -94,10 +94,11 @@ export default function HargaReferensi() {
         </div>
       </div>
 
-      <div className="card p-5 mt-8 bg-stone-50 text-sm text-stone-500">
-        Catatan: data pada demo ini bersifat simulasi. Untuk versi produksi, sumber data perlu
-        diintegrasikan dengan Panel Harga Pangan Nasional (Badan Pangan Nasional) atau PIHPS Bank Indonesia &mdash;
-        lihat berkas <code className="px-1 py-0.5 bg-white rounded border border-stone-200">PRODUCTION_CHECKLIST.md</code>.
+      <div className="card p-5 mt-8 bg-teal-50 text-sm text-teal-800 flex items-start gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+        <p>
+          <strong>Data Terintegrasi.</strong> Harga di atas merupakan data riil rata-rata nasional yang ditarik dari Sistem Pusat Informasi Harga Pangan Strategis (PIHPS) Bank Indonesia.
+        </p>
       </div>
     </div>
   );

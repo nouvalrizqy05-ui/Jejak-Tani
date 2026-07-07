@@ -6,10 +6,14 @@ const router = Router();
 // GET /api/harga - latest reference price per commodity
 router.get('/', (req, res) => {
   const rows = db.prepare(`
-    SELECT komoditas, harga_per_kg, tanggal, sumber
-    FROM harga_referensi
-    GROUP BY komoditas
-    ORDER BY komoditas ASC
+    SELECT h.komoditas, h.harga_per_kg, h.tanggal, h.sumber
+    FROM harga_referensi h
+    INNER JOIN (
+      SELECT komoditas, MAX(tanggal) AS max_tanggal
+      FROM harga_referensi
+      GROUP BY komoditas
+    ) latest ON h.komoditas = latest.komoditas AND h.tanggal = latest.max_tanggal
+    ORDER BY h.komoditas ASC
   `).all();
   res.json(rows);
 });
