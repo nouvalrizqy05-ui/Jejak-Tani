@@ -21,12 +21,10 @@ import RuteOptimasi from './pages/RuteOptimasi.jsx';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-stone-100 flex justify-center selection:bg-teal-200 selection:text-teal-900">
-      {/* Layar HP Semu / Mobile App Shell */}
-      <div className="w-full max-w-md bg-white min-h-screen shadow-2xl relative flex flex-col overflow-x-hidden">
-        <Navbar />
-        <main className="flex-1 pb-20">
-          <Routes>
+    <div className="min-h-screen bg-stone-100 selection:bg-teal-200 selection:text-teal-900 flex flex-col">
+      <Navbar />
+      <main className="flex-1 w-full max-w-7xl mx-auto md:px-6 pb-20 md:pb-8 relative bg-white shadow-xl min-h-screen">
+        <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/produk/:id" element={<ProductDetail />} />
             <Route path="/trace/:id" element={<TracePublic />} />
@@ -51,10 +49,15 @@ export default function App() {
               <ProtectedRoute roles={['admin']}><RuteOptimasi /></ProtectedRoute>
             } />
 
-            <Route path="*" element={<NotFound />} />
           </Routes>
-        </main>
-        
+      </main>
+      
+      {/* Footer bisa dikembalikan jika dibutuhkan untuk desktop */}
+      <div className="hidden md:block">
+        <Footer />
+      </div>
+      
+      <div className="md:hidden">
         <BottomNav />
       </div>
       <AccessibilityMenu />

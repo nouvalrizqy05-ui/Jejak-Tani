@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <div className="flex flex-col bg-stone-50 min-h-full">
       {/* Hero Section */}
-      <section className="relative px-5 pt-8 pb-10 bg-teal-700 text-white overflow-hidden rounded-b-[2.5rem]">
+      <section className="relative px-5 md:px-12 pt-8 md:pt-16 pb-10 md:pb-20 bg-teal-700 text-white overflow-hidden rounded-b-[2.5rem] md:rounded-b-[4rem]">
         {/* Subtle mesh background effect */}
         <div className="absolute inset-0 opacity-20 pointer-events-none" style={{
           backgroundImage: 'radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 20%)'
@@ -37,12 +37,13 @@ export default function Home() {
             Rural Commerce & Supply Chain
           </div>
           
-          <h1 className="font-display text-4xl font-semibold leading-tight mb-3">
-            Setiap panen <br/>
+          
+          <h1 className="font-display text-4xl md:text-6xl font-semibold leading-tight mb-3 md:mb-6">
+            Setiap panen <br className="md:hidden" />
             punya <span className="text-teal-200 italic">jejak.</span>
           </h1>
           
-          <p className="text-teal-50 text-sm leading-relaxed mb-6 opacity-90">
+          <p className="text-teal-50 text-sm md:text-lg leading-relaxed mb-6 md:mb-8 opacity-90 md:max-w-xl">
             Terhubung langsung ke petani. Harga transparan, kualitas grading A, riwayat terjamin hingga ke lahan asalnya.
           </p>
           
@@ -54,10 +55,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Feature Highlights (Horizontal Scroll) */}
-      <section className="px-5 -mt-6 relative z-20">
-        <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar">
-          <div className="min-w-[240px] bg-white p-4 rounded-2xl shadow-sm border border-stone-100 snap-start shrink-0">
+      {/* Feature Highlights (Horizontal Scroll on Mobile, Grid on Desktop) */}
+      <section className="px-5 md:px-12 -mt-6 md:-mt-10 relative z-20 max-w-5xl mx-auto">
+        <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-6 overflow-x-auto pb-4 snap-x hide-scrollbar">
+          <div className="min-w-[240px] md:min-w-0 bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-stone-100 snap-start shrink-0">
             <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 mb-3">
               <ShieldCheck className="w-5 h-5" />
             </div>
@@ -82,39 +83,39 @@ export default function Home() {
       </section>
 
       {/* Marketplace Section */}
-      <section id="marketplace" className="px-5 py-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display text-xl font-semibold text-stone-900">Etalase Petani</h2>
-        </div>
+      <section id="marketplace" className="px-5 md:px-12 py-6 md:py-12 max-w-7xl mx-auto w-full">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-8 gap-4">
+          <h2 className="font-display text-xl md:text-3xl font-semibold text-stone-900">Etalase Petani</h2>
 
-        {/* Search & Filter Bar */}
-        <div className="flex gap-2 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Cari beras, sayur..."
-              className="w-full bg-white border border-stone-200 rounded-xl py-2.5 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all shadow-sm"
-            />
-          </div>
-          <div className="relative">
-            <select 
-              value={kategori} 
-              onChange={(e) => setKategori(e.target.value)}
-              className="appearance-none bg-white border border-stone-200 rounded-xl py-2.5 pl-4 pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 shadow-sm"
-            >
-              <option value="">Semua Kategori</option>
-              {kategoriList.map((k) => <option key={k} value={k}>{k}</option>)}
-            </select>
-            <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" />
+          {/* Search & Filter Bar */}
+          <div className="flex gap-2 w-full md:w-auto">
+            <div className="relative flex-1 md:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Cari beras, sayur..."
+                className="w-full bg-white border border-stone-200 rounded-xl py-2.5 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all shadow-sm"
+              />
+            </div>
+            <div className="relative">
+              <select 
+                value={kategori} 
+                onChange={(e) => setKategori(e.target.value)}
+                className="appearance-none bg-white border border-stone-200 rounded-xl py-2.5 pl-4 pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 shadow-sm"
+              >
+                <option value="">Semua Kategori</option>
+                {kategoriList.map((k) => <option key={k} value={k}>{k}</option>)}
+              </select>
+              <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" />
+            </div>
           </div>
         </div>
 
         {/* Product Grid */}
         {loading ? (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map(i => (
               <div key={i} className="bg-white rounded-2xl p-3 border border-stone-100 shadow-sm animate-pulse">
                 <div className="w-full aspect-square bg-stone-100 rounded-xl mb-3"></div>
@@ -133,7 +134,7 @@ export default function Home() {
             <p className="text-stone-400 text-xs mt-1">Coba kata kunci atau kategori lain.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
             {produkList.map((p) => <ProductCard key={p.id} produk={p} />)}
           </div>
         )}

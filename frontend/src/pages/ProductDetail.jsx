@@ -53,21 +53,35 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="bg-stone-50 min-h-full pb-24">
-      {/* App Bar Over Image */}
-      <div className="absolute top-0 left-0 right-0 z-10 p-4 flex justify-between items-center bg-gradient-to-b from-black/50 to-transparent">
+    <div className="bg-stone-50 min-h-full pb-24 md:pb-10 max-w-7xl mx-auto w-full md:px-6">
+      {/* App Bar Over Image (Mobile Only) */}
+      <div className="md:hidden absolute top-0 left-0 right-0 z-10 p-4 flex justify-between items-center bg-gradient-to-b from-black/50 to-transparent">
         <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
           <ArrowLeft className="w-5 h-5" />
         </button>
       </div>
 
-      {/* Hero Image / Emoji */}
-      <div className="w-full aspect-square flex items-center justify-center text-9xl bg-gradient-to-br from-teal-100 to-harvest-100">
-        <span className="drop-shadow-2xl hover:scale-110 transition-transform duration-500">{produk.foto_emoji}</span>
+      <div className="md:hidden">
+        {/* Hero Image / Emoji Mobile */}
+        <div className="w-full aspect-square flex items-center justify-center text-9xl bg-gradient-to-br from-teal-100 to-harvest-100">
+          <span className="drop-shadow-2xl hover:scale-110 transition-transform duration-500">{produk.foto_emoji}</span>
+        </div>
       </div>
 
-      {/* Content Container (Pulls up over image) */}
-      <div className="bg-white rounded-t-[2rem] -mt-8 relative z-20 px-5 pt-8 pb-10 shadow-sm border-t border-white/50">
+      <div className="hidden md:flex items-center gap-2 py-4">
+        <button onClick={() => navigate(-1)} className="text-sm font-semibold text-teal-700 hover:underline flex items-center gap-1">
+          <ArrowLeft className="w-4 h-4" /> Kembali
+        </button>
+      </div>
+
+      <div className="md:grid md:grid-cols-2 md:gap-10 md:mt-2">
+        {/* Desktop Image */}
+        <div className="hidden md:flex w-full aspect-square items-center justify-center text-[12rem] bg-gradient-to-br from-teal-50 to-harvest-50 rounded-[3rem] shadow-sm border border-stone-100">
+          <span className="drop-shadow-2xl hover:scale-110 transition-transform duration-500">{produk.foto_emoji}</span>
+        </div>
+
+        {/* Content Container (Pulls up over image on mobile, normal grid column on desktop) */}
+        <div className="bg-white rounded-t-[2rem] md:rounded-[3rem] -mt-8 md:mt-0 relative z-20 px-5 pt-8 pb-10 shadow-sm border-t md:border border-white/50 md:border-stone-100 md:shadow-xl md:p-10 flex flex-col h-full">
         <div className="flex items-center justify-between mb-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-leaf-50 text-leaf-700 text-xs font-bold uppercase tracking-wide">
             <Award className="w-3.5 h-3.5" /> Grade {produk.grade}
@@ -124,10 +138,43 @@ export default function ProductDetail() {
         <div className="pl-2">
           <TraceTimeline perjalanan={produk.traceability} />
         </div>
+        
+        {/* Dekstop Buy Action - Appends at the end of right column */}
+        <div className="hidden md:block mt-auto pt-8">
+          {user?.role === 'buyer' ? (
+            <div className="flex gap-3 h-14">
+              <div className="flex items-center border border-stone-300 rounded-xl bg-white w-32 shrink-0 overflow-hidden">
+                <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-10 h-full flex items-center justify-center text-stone-500 hover:bg-stone-50 active:bg-stone-100 transition-colors">&minus;</button>
+                <div className="flex-1 text-center font-semibold text-sm border-x border-stone-100 h-full flex items-center justify-center">{qty}</div>
+                <button onClick={() => setQty(q => Math.min(sisa, q + 1))} className="w-10 h-full flex items-center justify-center text-stone-500 hover:bg-stone-50 active:bg-stone-100 transition-colors">+</button>
+              </div>
+              <button 
+                onClick={handleAdd} 
+                disabled={sisa === 0 || added}
+                className={`flex-1 rounded-xl font-semibold text-base flex items-center justify-center gap-2 transition-all shadow-lg ${
+                  sisa === 0 ? 'bg-stone-200 text-stone-400 cursor-not-allowed shadow-none' : 
+                  added ? 'bg-green-500 text-white shadow-green-500/30' : 
+                  'bg-teal-700 text-white hover:bg-teal-800 shadow-teal-900/20 active:scale-95'
+                }`}
+              >
+                {added ? <CheckCircle2 className="w-5 h-5" /> : <ShoppingBag className="w-5 h-5" />}
+                {sisa === 0 ? 'Habis' : added ? 'Ditambahkan' : 'Tambah ke Keranjang'}
+              </button>
+            </div>
+          ) : !user ? (
+            <Link to="/masuk" className="w-full h-14 rounded-xl bg-teal-700 text-white font-semibold text-base flex items-center justify-center hover:bg-teal-800 shadow-lg shadow-teal-900/20 transition-all active:scale-95">
+              Masuk untuk Membeli
+            </Link>
+          ) : (
+            <div className="h-14 flex items-center justify-center bg-stone-100 rounded-xl text-stone-500 text-sm font-medium">
+              Beralih ke akun Pembeli untuk bertransaksi.
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Sticky Bottom Add to Cart (Only for Buyers) */}
-      <div className="fixed bottom-16 left-0 right-0 z-30 flex justify-center pointer-events-none">
+      {/* Sticky Bottom Add to Cart (Only for Mobile) */}
+      <div className="md:hidden fixed bottom-16 left-0 right-0 z-30 flex justify-center pointer-events-none">
         <div className="w-full max-w-md bg-white/90 backdrop-blur-md border-t border-stone-200 p-4 pointer-events-auto">
           {user?.role === 'buyer' ? (
             <div className="flex gap-3 h-12">
