@@ -96,6 +96,8 @@ router.post('/', requireAuth, requireRole('petani'), async (req, res) => {
   res.status(201).json(withPetaniInfo(produk));
 });
 
+import { sendWhatsApp } from '../utils/fonnte.js';
+
 // ==========================================
 // MENGUBAH STATUS PRODUK (PETANI / ADMIN)
 // ==========================================
@@ -149,6 +151,22 @@ router.patch('/:id/status', requireAuth, requireRole('petani', 'admin'), async (
       INSERT INTO traceability_log (id, produk_id, tahap, lokasi, catatan, suhu_celcius, cuaca, kondisi_cold_chain)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `).run(logId, produkId, status, lokasi || null, catatan || null, suhu, cuacaStr, kondisi);
+
+    // Kirim WhatsApp Notifikasi
+    try {
+      const stmtUser = db.prepare('SELECT u.no_hp, u.nama FROM users u JOIN petani p ON u.id = p.user_id WHERE p.id = ?');
+      const user = stmtUser.get(produk.petani_id);
+      if (user && user.no_hp) {
+        let msg = `Halo ${user.nama},\n\nStatus pelacakan produk Anda *${produk.nama}* (ID: ${produkId}) telah diperbarui menjadi: *${status.toUpperCase()}*.\n\n`;
+        if (suhu) msg += `Suhu saat ini: ${suhu}°C\nKondisi: ${kondisi}\n\n`;
+        msg += `Cek pelacakan lengkap: https://jejaktani.id/trace/${produkId}\n\n- Sistem Jejak Tani`;
+        
+        // Asynchronous non-blocking
+        sendWhatsApp(user.no_hp, msg).catch(e => console.error(e));
+      }
+    } catch (e) {
+      console.error('Gagal memproses notifikasi WA:', e);
+    }
 
     res.json({ message: 'Status produk berhasil diperbarui.', status });
   } catch (error) {

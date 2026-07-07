@@ -25,6 +25,31 @@ export default function TraceTimeline({ perjalanan = [] }) {
             </div>
             {step.lokasi && <p className="text-sm text-stone-500 mt-0.5">{step.lokasi}</p>}
             {step.catatan && <p className="text-sm text-stone-600 mt-1">{step.catatan}</p>}
+            
+            {/* IoT Data Section */}
+            {(step.suhu_celcius !== null || step.cuaca || step.kondisi_cold_chain) && (
+              <div className="mt-3 pt-3 border-t border-stone-100 flex flex-wrap gap-2">
+                {step.suhu_celcius !== null && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-cyan-100 text-cyan-800">
+                    🌡️ Suhu: {step.suhu_celcius}°C
+                  </span>
+                )}
+                {step.cuaca && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                    ☁️ Cuaca: {step.cuaca}
+                  </span>
+                )}
+                {step.kondisi_cold_chain && (
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                    step.kondisi_cold_chain.toLowerCase().includes('optimal') ? 'bg-green-100 text-green-800' : 
+                    step.kondisi_cold_chain.toLowerCase().includes('waspada') ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    ❄️ Cold Chain: {step.kondisi_cold_chain}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </li>
       ))}
