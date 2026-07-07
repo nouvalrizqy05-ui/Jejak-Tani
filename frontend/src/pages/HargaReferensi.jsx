@@ -141,42 +141,44 @@ export default function HargaReferensi() {
               </div>
               <p className="text-xs text-stone-500 mb-6 mt-2 sm:mt-0">Sumber: {historis[0]?.sumber}</p>
               
-              <div className="flex-1 min-h-[300px] min-w-0 w-full overflow-hidden px-1">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={filteredHistoris} margin={{ top: 5, right: 10, bottom: 5, left: -25 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" vertical={false} />
-                    <XAxis 
-                      dataKey="tanggal" 
-                      tickFormatter={(val) => formatDate(val).slice(0, 6)}
-                      tick={{fontSize: 11, fill: '#78716c'}}
-                      axisLine={false}
-                      tickLine={false}
-                      dy={10}
-                      minTickGap={30}
-                    />
-                    <YAxis 
-                      tickFormatter={(val) => `Rp${val/1000}k`}
-                      tick={{fontSize: 11, fill: '#78716c'}}
-                      axisLine={false}
-                      tickLine={false}
-                      domain={['auto', 'auto']}
-                      width={60}
-                    />
-                    <Tooltip 
-                      formatter={(value) => [formatRupiah(value), 'Harga']}
-                      labelFormatter={(label) => formatDate(label)}
-                      contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px'}}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="harga_per_kg" 
-                      stroke="#0f766e" 
-                      strokeWidth={2} 
-                      dot={false}
-                      activeDot={{ r: 6, fill: '#0f766e', stroke: '#ccfbf1', strokeWidth: 4 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+              <div className="flex-1 min-h-[300px] w-full relative mt-2">
+                <div className="absolute inset-0">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={filteredHistoris} margin={{ top: 5, right: 10, bottom: 5, left: -25 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" vertical={false} />
+                      <XAxis 
+                        dataKey="tanggal" 
+                        tickFormatter={(val) => formatDate(val).slice(0, 6)}
+                        tick={{fontSize: 11, fill: '#78716c'}}
+                        axisLine={false}
+                        tickLine={false}
+                        dy={10}
+                        minTickGap={30}
+                      />
+                      <YAxis 
+                        tickFormatter={(val) => `Rp${val/1000}k`}
+                        tick={{fontSize: 11, fill: '#78716c'}}
+                        axisLine={false}
+                        tickLine={false}
+                        domain={['auto', 'auto']}
+                        width={60}
+                      />
+                      <Tooltip 
+                        formatter={(value) => [formatRupiah(value), 'Harga']}
+                        labelFormatter={(label) => formatDate(label)}
+                        contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px'}}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="harga_per_kg" 
+                        stroke="#0f766e" 
+                        strokeWidth={2} 
+                        dot={false}
+                        activeDot={{ r: 6, fill: '#0f766e', stroke: '#ccfbf1', strokeWidth: 4 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
           )}
